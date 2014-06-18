@@ -25,22 +25,13 @@
 
 			createRoom(scene);
 
-			var spotLight = new THREE.SpotLight( 0xffffff );
-			spotLight.position.set( 0, 0, 20 );
-
-			spotLight.castShadow = true;
-
-			spotLight.shadowMapWidth = 1024;
-			spotLight.shadowMapHeight = 1024;
-
-			spotLight.shadowCameraNear = 500;
-			spotLight.shadowCameraFar = 4000;
-			spotLight.shadowCameraFov = 30;
-
-			scene.add( spotLight );
+			addLight(scene);
 
 			renderer.shadowMapEnabled = true;
 
+			// so we can see a bit besides spotlight
+			var light = new THREE.AmbientLight( 0x040404 ); // soft white light
+			scene.add( light );
 
 
 			camera.position.y = 5;
