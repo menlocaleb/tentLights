@@ -7,6 +7,7 @@
 		<script src="js/tentLightsLights.js"></script>
 		<script src="js/lightingBoard.js"></script>
 		<script src="js/main.js"></script>
+
 		<link rel="stylesheet" type="text/css" href="css/tentLights.css" />
 	</head>
 	<body>
@@ -15,15 +16,21 @@
 				<div id="tl-brand">
 					<h1>Tent Lights</h1>
 				</div>
+				<span>The virtual reality simulator for the lights at <a href="http://nudm.org">NUDM!</a></span>
 			</div>
 			<div id="tl-content">
 				<div id="tl-viewport">
 				</div>
 				<div id="tl-control-panel">
-					<div id="tl-light-selector">
+					<div id="tl-light-selector" style="display:none;">
 						<div class="tl-toggle-light" data-id="1">Light 1</div>
 					</div>
 					<div id="tl-live-controls">
+						<h2>Change the Color</h2>
+						<div id="tl-color-picker"></div>
+						<div style="clear:both;"></div>
+						<p>Use the arrow keys to pan and tilt the light around!</p>
+						
 					</div>
 				</div>
 				<div style="clear: both;"></div>

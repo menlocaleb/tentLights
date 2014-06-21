@@ -12,7 +12,8 @@ TentLights.LightingBoard = function(lightingController) {
 
 
 	//public properties
-
+	// this stores and controls the actual lights in the scene
+	this.controller = lightingController;
 
 	// public methods
 	this.GetSelectedLights = function() {
@@ -42,6 +43,7 @@ TentLights.LightingBoard = function(lightingController) {
 	}
 }
 
+// This method is called right after creating lightingBoard in order for it to keep updated list of selected lights
 // will attach click handlers to children of domParentId
 TentLights.LightingBoard.prototype.CreateSelectionHandlers = function(domParentId) {
 	// store this variable before reset for jQuery block below
@@ -61,6 +63,14 @@ TentLights.LightingBoard.prototype.CreateSelectionHandlers = function(domParentI
 	});
 }
 
+// This method is called from UI handling code, it bundles up an action request with the
+// currently selected light ids and sends it to the lighting controller.
+// actionParameters should have two fields
+// action: one of 'pan', 'tilt', 'beamWidth', 'intensity', 'color'
+// value: numeric (can be hex) value to pass to controller
+TentLights.LightingBoard.prototype.SubmitLightingAction = function(actionParameters) {
+	// TODO	
+}
 
 
 

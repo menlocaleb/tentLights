@@ -12,6 +12,11 @@ body {
 	color: #aaaaaa;
 }
 
+a {
+	color: yellow;
+	font-weight: bold;
+}
+
 #tl-container {
 	width: 1600px;
 	height: 100%;
@@ -69,18 +74,32 @@ body {
 	padding-top: 10px;
 }
 
-.selected {
+.tl-light-selector .selected {
 	background-color: green;
 }
 
 #tl-live-controls {
-
+	clear: both;
 }
 
+#tl-color-picker {
+	margin: auto;
+	width: 80%;
+}
 
+.tl-color-swath {
+	float: left;
+	height: 50px;
+	margin: 0px;
+	margin-right: 1px;
+}
 
-
-
+#tl-color-picker .selected {
+	margin-right: 0px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: yellow;	
+}
 
 
 

@@ -32,6 +32,31 @@ function init() {
 	scene.add( light );
 }
 
+function initUI() {
+
+	function componentToHex(c) {
+	    var hex = c.toString(16);
+	    return hex.length == 1 ? "0" + hex : hex;
+	}
+
+	function rgbToHex(r, g, b) {
+	    return "Ox" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+	}
+
+
+	$(".tl-color-swath").click(function() {
+		var selected = $(this).hasClass('selected');
+		if (!selected) {
+			var color = $(this).css('background-color');
+			spot.color.setStyle(color);
+			$("#tl-color-picker .selected").removeClass('selected');
+			$(this).addClass('selected');
+
+		}
+		
+	});
+}
+
 function screenSizeChange() {
 	renderer.setSize(renderWindow.innerWidth(), renderWindow.innerWidth()/aspectRatio);
 }
@@ -171,26 +196,46 @@ function createRoom(scene) {
 	ceilingMesh.rotation.x = Math.PI;
 
 	scene.add( ceilingMesh );
-
-
 	
+}
+
+
+function createColorPicker() {
+	var listOfColors = [
+		'#FFFFFF',
+		'#E8152E',
+		'#B726FF',
+		'#26FFF4'
+	];
+
+	// make first color selected
+	if (listOfColors.length > 0) {
+		$("#tl-color-picker").append('<div class="tl-color-swath selected" style="width:' + 95/listOfColors.length + '%; background-color:' + listOfColors[0] + ';"></div>');
+	}																						// use 99 to ensure border doesn't make swatches overlap line
+	for (var i = 1; i < listOfColors.length; i++) {
+		console.log("list of colors");
+		$("#tl-color-picker").append('<div class="tl-color-swath" style="width:' + 95/listOfColors.length + '%; background-color:' + listOfColors[i] + ';"></div>');
+	}
 	
 }
 
 
 function main() {
-	//alert("main");
+	
 	init();
 	createRoom(scene);
 	setupCamera();
 
-	spot = new TentLights.Mover( 0xffffff );
+	spot = new TentLights.Mover( "#ffffff" );
 	spot.position.set( 0, 0, 3 );
 	scene.add(spot);
 
 	lightingBoard = new TentLights.LightingBoard(lightingController);
 
 	lightingBoard.CreateSelectionHandlers("#tl-light-selector");
+	createColorPicker();
+	initUI();
+
 
 	render();
 
@@ -225,11 +270,12 @@ document.addEventListener('keydown', function(event) {
 });
 
 
+
+
 // Register Handlers
 $(document).ready(main);
 
 $(window).resize(screenSizeChange);
-
 
 
 
