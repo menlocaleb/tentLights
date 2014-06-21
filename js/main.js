@@ -10,20 +10,31 @@ var panAngle = 0;
 var tiltAngle = 0;
 var stepAngle = Math.PI/20;
 
+var renderWindow;
+var aspectRatio = 16/9;
+
+var lightingController = {};
+var lightingBoard;
+
+
 function init() {
+	renderWindow = $("#tl-viewport");
 	scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight, 0.1, 1000);
+	camera = new THREE.PerspectiveCamera(75,16/9, 0.1, 1000);
 
 	renderer = new THREE.WebGLRenderer();
 	renderer.shadowMapEnabled = true;
-	renderer.setSize(window.innerWidth, window.innerHeight);
-	document.body.appendChild(renderer.domElement);
+	renderer.setSize(renderWindow.innerWidth(), renderWindow.innerWidth()/aspectRatio);
+	renderWindow.append(renderer.domElement);
 
 	// so we can see a bit besides spotlight
 	var light = new THREE.AmbientLight( 0x171717 ); // soft white light
 	scene.add( light );
 }
 
+function screenSizeChange() {
+	renderer.setSize(renderWindow.innerWidth(), renderWindow.innerWidth()/aspectRatio);
+}
 
 function setupCamera() {
 	camera.position.y = 5;
@@ -173,13 +184,13 @@ function main() {
 	createRoom(scene);
 	setupCamera();
 
-	//l1 = addLight(scene);
 	spot = new TentLights.Mover( 0xffffff );
-	//spot.target.position = new THREE.Vector3(0,0,-1);
-	//spot.add(spot.target); // hope this makes target track with spotlight
 	spot.position.set( 0, 0, 3 );
 	scene.add(spot);
-	console.log(spot);
+
+	lightingBoard = new TentLights.LightingBoard(lightingController);
+
+	lightingBoard.CreateSelectionHandlers("#tl-light-selector");
 
 	render();
 
@@ -203,6 +214,7 @@ document.addEventListener('keydown', function(event) {
 		case 39: // right arrow
 			panAngle = panAngle - stepAngle;
 			spot.pan = panAngle;
+			console.log(spot.pan);
 			break;
 		case 82: // 'r'
 			spot.color = new THREE.Color(1,0,0)
@@ -212,7 +224,11 @@ document.addEventListener('keydown', function(event) {
 
 });
 
-window.onload = main;
+
+// Register Handlers
+$(document).ready(main);
+
+$(window).resize(screenSizeChange);
 
 
 
