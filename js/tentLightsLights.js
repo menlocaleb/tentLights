@@ -11,10 +11,18 @@ TentLights.reduceToWithinTwoPi = function(number) {
 
 /* Specialized subclass of the THREE.SpotLight class */
 TentLights.Mover = function(hex, intensity) {
-	// Private properties
-
 	// subclass THREE.SportLight
 	THREE.SpotLight.call(this, hex, intensity);
+
+	// Private properties
+	var lightGeometry = new THREE.CylinderGeometry( 0.5, 0.5, 1, 20);
+	var lightMaterial = new THREE.MeshBasicMaterial( {color: 0x000000} );
+	var lightBody = new THREE.Mesh( lightGeometry, lightMaterial );
+	lightBody.position.z = -0.4;
+	lightBody.rotation.x = Math.PI/2;
+	this.add( lightBody );
+
+	
 
 	// Lock spot light target to -z axis of spotlight
 	// Now spot light can be turned using rotation of spotlight

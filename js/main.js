@@ -5,10 +5,13 @@ var scene;
 var camera;
 var renderer;
 var spot;
+var ambientLight;
 var l1
 var panAngle = 0;
 var tiltAngle = 0;
-var stepAngle = Math.PI/20;
+var stepAngle = Math.PI/50;
+var stepTiltAngle = Math.PI/100;
+var animationType = "twirly";
 
 var renderWindow;
 var aspectRatio = 16/9;
@@ -28,30 +31,53 @@ function init() {
 	renderWindow.append(renderer.domElement);
 
 	// so we can see a bit besides spotlight
-	var light = new THREE.AmbientLight( 0x171717 ); // soft white light
-	scene.add( light );
+	ambientLight = new THREE.AmbientLight( 0x171717 ); // soft white light
+	scene.add( ambientLight );
 }
 
 function initUI() {
-
-	function componentToHex(c) {
-	    var hex = c.toString(16);
-	    return hex.length == 1 ? "0" + hex : hex;
-	}
-
-	function rgbToHex(r, g, b) {
-	    return "Ox" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-	}
-
 
 	$(".tl-color-swath").click(function() {
 		var selected = $(this).hasClass('selected');
 		if (!selected) {
 			var color = $(this).css('background-color');
-			spot.color.setStyle(color);
+			var lightIds = lightingBoard.GetSelectedLights();
+			var count = 0;
+			var predominantColor;
+			if (lightIds["1"]) {
+				spot.color.setStyle(color);
+				predominantColor = spot.color;
+				count = count + 1;
+			}
+			if (lightIds["2"]) {
+				spot2.color.setStyle(color);
+				predominantColor = spot2.color;
+				count = count + 1;
+			}
+			if (lightIds["3"]) {
+				spot3.color.setStyle(color);
+				predominantColor = spot3.color;
+				count = count + 1;
+			}
+			if (count >= 2) {
+				var scaleFactor = 0.2;
+				var ambientColor = new THREE.Color(predominantColor.r * scaleFactor, predominantColor.g * scaleFactor, predominantColor.b * scaleFactor);
+				ambientLight.color = ambientColor;
+			}
 			$("#tl-color-picker .selected").removeClass('selected');
 			$(this).addClass('selected');
 
+		}
+		
+	});
+
+	$("#tl-animation-toggle").click(function() {
+		if (animationType === 'circle') {
+			animationType = 'twirly';
+			$(this).css("background-color", "#F27013");
+		} else {
+			animationType = 'circle';
+			$(this).css("background-color", "#00CC30");
 		}
 		
 	});
@@ -62,61 +88,51 @@ function screenSizeChange() {
 }
 
 function setupCamera() {
-	camera.position.y = 5;
-	camera.position.z = 5;
+	camera.position.x = 4;
+	camera.position.y = 4;
+	camera.position.z = 6;
 	camera.up = new THREE.Vector3(0,0,1);
-	camera.lookAt(new THREE.Vector3(0,0,0));
+	camera.lookAt(new THREE.Vector3(0,-4,3));
 }
 
 var render = function() {
 	requestAnimationFrame(render);
 
-	//panAngle = panAngle + stepAngle;
-	//animateLight(spot, panAngle);
-	//animateLight2();
+	if (animationType === 'circle') {
+		animateLightCircle(spot);
+		animateLightCircleAndTilt(spot2);
+		animateLightCircle(spot3, true);
+
+	} else {
+		animateLightCircleAndTilt(spot);
+		animateLightCircle(spot2);
+		animateLightCircleAndTilt(spot3, true);
+	}
 	renderer.render(scene, camera);
 };
 
 
 
-
-function addLight(scene) {
-	var spotLight = new THREE.SpotLight( 0xffffff );
-	spotLight.position.set( 0, 0, 3 );
-	spotLight.target.position = new THREE.Vector3(0,0,-1);
-	spotLight.add(spotLight.target); // hope this makes target track with spotlight
-	/*var target = new THREE.Vector3(1,1,1);
-	target.negate().add(spotLight.position);
-	spotLight.target.position = target;
-	console.log(target);*/
-
-	spotLight.castShadow = true;
-
-	spotLight.shadowMapWidth = 1024;
-	spotLight.shadowMapHeight = 1024;
-
-	spotLight.shadowCameraNear = 500;
-	spotLight.shadowCameraFar = 4000;
-	spotLight.shadowCameraFov = 30;
-	spotLight.angle = Math.PI/15;
-
-	scene.add( spotLight );
-
-	console.log(spotLight);
-
-	return spotLight;
+function animateLightCircle(light, switchDir) {
+	if (switchDir) {
+		light.pan = light.pan - stepAngle;
+	} else {
+		light.pan = light.pan + stepAngle;
+	}
 }
 
-function animateLight(light, angle) {
-	/*var rotation = new THREE.Euler( 0, Math.PI/4, angle, 'XZY' );
-	console.log(rotation);
-	var target = new THREE.Vector3(0,0,1);
-	target.applyEuler(rotation);
-	target.negate().add(light.position);
-	light.target.position = target;*/
-	light.rotation.order = 'ZXY';
-	light.rotation.x = Math.PI/4;
-	light.rotation.z = angle;
+function animateLightCircleAndTilt(light, switchDir) {
+	if (switchDir) {
+		light.pan = light.pan - stepAngle;
+	} else {
+		light.pan = light.pan + stepAngle;
+	}
+
+	if (Math.abs(light.tilt + stepTiltAngle) > Math.PI/3) {
+		stepTiltAngle = -1 * stepTiltAngle;
+	}
+
+	light.tilt = light.tilt + stepTiltAngle;
 }
 
 
@@ -127,10 +143,20 @@ function createRoom(scene) {
 		tentWidth = 10,
 		tentHeight = 10;
 
+
+	var wallTexture = THREE.ImageUtils.loadTexture( "assets/whitePattern1.jpg" );
+	wallTexture.wrapS = THREE.RepeatWrapping;
+	wallTexture.wrapT = THREE.RepeatWrapping;
+	wallTexture.repeat.set( 4, 4 );
+	// var flootTexture = THREE.ImageUtils.loadTexture( "assets/blackBoards.jpeg" );
+	// flootTexture.wrapS = THREE.RepeatWrapping;
+	// flootTexture.wrapT = THREE.RepeatWrapping;
+	// flootTexture.repeat.set( 4, 4 );
+
 	// need phong b/c I think lambert is evaluated per vertex which for plane doesn't work
-	var floorMaterial = new THREE.MeshPhongMaterial( { ambient: 0x222222, color: 0x222222, specular: 0xcccccc, shininess: 50, shading: THREE.FlatShading } );
+	var floorMaterial = new THREE.MeshPhongMaterial( { ambient: 0x666666, color: 0x222222, specular: 0xcccccc, shininess: 30, shading: THREE.FlatShading } );
 	//floorMaterial.side = THREE.DoubleSide;
-	var wallMaterial = new THREE.MeshPhongMaterial( { ambient: 0xfefefe, color: 0xfefefe, specular: 0xffffff, shininess: 50, shading: THREE.FlatShading } );
+	var wallMaterial = new THREE.MeshPhongMaterial( { ambient: 0xeeeeee, color: 0xfefefe, specular: 0xffffff, shininess: 30, shading: THREE.FlatShading, map: wallTexture } );
 	//wallMaterial.side = THREE.DoubleSide;
 
 	// create floor of room
@@ -227,49 +253,26 @@ function main() {
 	setupCamera();
 
 	spot = new TentLights.Mover( "#ffffff" );
-	spot.position.set( 0, 0, 3 );
+	spot.position.set( 0, 3, 8 );
 	scene.add(spot);
+	spot2 = new TentLights.Mover( "#ffffff" );
+	spot2.position.set( 0, 0, 7 );
+	scene.add(spot2);
+	spot3 = new TentLights.Mover( "#ffffff" );
+	spot3.position.set( 0, -3, 8 );
+	scene.add(spot3);
 
-	lightingBoard = new TentLights.LightingBoard(lightingController);
 
-	lightingBoard.CreateSelectionHandlers("#tl-light-selector");
 	createColorPicker();
 	initUI();
+	lightingBoard = new TentLights.LightingBoard(lightingController);
+	lightingBoard.CreateSelectionHandlers(".lt-toggle-light");
+	
 
 
 	render();
 
 }
-
-
-document.addEventListener('keydown', function(event) {
-	switch (event.which) {
-		case 38: // up arrow
-			tiltAngle = tiltAngle + stepAngle;
-			spot.tilt = tiltAngle;
-			break;
-		case 40: // down arrow
-			tiltAngle = tiltAngle - stepAngle;
-			spot.tilt = tiltAngle;
-			break;
-		case 37: // left arrow
-			panAngle = panAngle + stepAngle;
-			spot.pan = panAngle;
-			break;
-		case 39: // right arrow
-			panAngle = panAngle - stepAngle;
-			spot.pan = panAngle;
-			console.log(spot.pan);
-			break;
-		case 82: // 'r'
-			spot.color = new THREE.Color(1,0,0)
-		default:
-		console.log("No action for that key");
-	}
-
-});
-
-
 
 
 // Register Handlers

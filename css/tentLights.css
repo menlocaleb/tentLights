@@ -9,7 +9,7 @@ body {
 	font-family: arial;
 	background-color: #533175;
 	font-size: 1em;
-	color: #aaaaaa;
+	color: white;
 }
 
 a {
@@ -43,38 +43,42 @@ a {
 }
 
 #tl-viewport {
-	width: 47%;
+	width: 67%;
 	max-height: 600px;
 	margin-left: 2%;
 	float: left;
+
+	border-width: 5px;
+	border-style: solid;
+	border-color: black;
 }
 
 #tl-control-panel {
-	width: 45%%;
+	width: 25%%;
 	height: 600px;
 	margin-right: 2%;
 	padding: 1%;
 	background-color: #222222;
 	float: right;
+
 }
 
 
 #tl-light-selector {
-	border-style: solid;
-	border-color: #111111;
-	border-width: 1px;
-	padding: 2px 5px
+	padding: 2px 5px;
 }
 
 .tl-toggle-light {
-	width: 60px;
+	width: 32%;
 	height: 50px;
 	background-color: #444444;
 	text-align: center;
 	padding-top: 10px;
+	margin-right: 5px;
+	float: left;
 }
 
-.tl-light-selector .selected {
+#tl-light-selector .selected {
 	background-color: green;
 }
 
@@ -83,7 +87,7 @@ a {
 }
 
 #tl-color-picker {
-	margin: auto;
+	margin-left: 4px;
 	width: 80%;
 }
 

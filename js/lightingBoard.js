@@ -45,10 +45,10 @@ TentLights.LightingBoard = function(lightingController) {
 
 // This method is called right after creating lightingBoard in order for it to keep updated list of selected lights
 // will attach click handlers to children of domParentId
-TentLights.LightingBoard.prototype.CreateSelectionHandlers = function(domParentId) {
+TentLights.LightingBoard.prototype.CreateSelectionHandlers = function(className) {
 	// store this variable before reset for jQuery block below
 	var self = this;
-	$(domParentId).delegate(".tl-toggle-light", "click", function() {
+	$(".tl-toggle-light").click(function() {
 		var button = $(this);
 		var lightId = button.attr("data-id");
 
