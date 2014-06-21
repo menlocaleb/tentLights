@@ -31,7 +31,7 @@ function init() {
 	renderWindow.append(renderer.domElement);
 
 	// so we can see a bit besides spotlight
-	ambientLight = new THREE.AmbientLight( 0x171717 ); // soft white light
+	ambientLight = new THREE.AmbientLight( 0x252525 ); // soft white light
 	scene.add( ambientLight );
 }
 
@@ -81,6 +81,7 @@ function initUI() {
 		}
 		
 	});
+
 }
 
 function screenSizeChange() {
@@ -88,9 +89,9 @@ function screenSizeChange() {
 }
 
 function setupCamera() {
-	camera.position.x = 4;
-	camera.position.y = 4;
-	camera.position.z = 6;
+	camera.position.x = 4.5;
+	camera.position.y = 4.5;
+	camera.position.z = 8;
 	camera.up = new THREE.Vector3(0,0,1);
 	camera.lookAt(new THREE.Vector3(0,-4,3));
 }
@@ -112,7 +113,6 @@ var render = function() {
 };
 
 
-
 function animateLightCircle(light, switchDir) {
 	if (switchDir) {
 		light.pan = light.pan - stepAngle;
@@ -120,6 +120,8 @@ function animateLightCircle(light, switchDir) {
 		light.pan = light.pan + stepAngle;
 	}
 }
+
+
 
 function animateLightCircleAndTilt(light, switchDir) {
 	if (switchDir) {
@@ -132,7 +134,8 @@ function animateLightCircleAndTilt(light, switchDir) {
 		stepTiltAngle = -1 * stepTiltAngle;
 	}
 
-	light.tilt = light.tilt + stepTiltAngle;
+	light.tilt = light.tilt + stepTiltAngle;	
+	
 }
 
 
@@ -144,10 +147,10 @@ function createRoom(scene) {
 		tentHeight = 10;
 
 
-	var wallTexture = THREE.ImageUtils.loadTexture( "assets/whitePattern1.jpg" );
+	var wallTexture = THREE.ImageUtils.loadTexture( "assets/paperTexture.jpg" );
 	wallTexture.wrapS = THREE.RepeatWrapping;
 	wallTexture.wrapT = THREE.RepeatWrapping;
-	wallTexture.repeat.set( 4, 4 );
+	wallTexture.repeat.set( 1, 1 );
 	// var flootTexture = THREE.ImageUtils.loadTexture( "assets/blackBoards.jpeg" );
 	// flootTexture.wrapS = THREE.RepeatWrapping;
 	// flootTexture.wrapT = THREE.RepeatWrapping;
@@ -231,16 +234,17 @@ function createColorPicker() {
 		'#FFFFFF',
 		'#E8152E',
 		'#B726FF',
-		'#26FFF4'
+		'#26FFF4',
+		'#00CC30'
 	];
 
 	// make first color selected
 	if (listOfColors.length > 0) {
-		$("#tl-color-picker").append('<div class="tl-color-swath selected" style="width:' + 95/listOfColors.length + '%; background-color:' + listOfColors[0] + ';"></div>');
+		$("#tl-color-picker").append('<div class="tl-color-swath selected" style="width:' + 97/listOfColors.length + '%; background-color:' + listOfColors[0] + ';"></div>');
 	}																						// use 99 to ensure border doesn't make swatches overlap line
 	for (var i = 1; i < listOfColors.length; i++) {
 		console.log("list of colors");
-		$("#tl-color-picker").append('<div class="tl-color-swath" style="width:' + 95/listOfColors.length + '%; background-color:' + listOfColors[i] + ';"></div>');
+		$("#tl-color-picker").append('<div class="tl-color-swath" style="width:' + 97/listOfColors.length + '%; background-color:' + listOfColors[i] + ';"></div>');
 	}
 	
 }
@@ -253,13 +257,14 @@ function main() {
 	setupCamera();
 
 	spot = new TentLights.Mover( "#ffffff" );
-	spot.position.set( 0, 3, 8 );
+	spot.position.set( 0, 4, 9 );
 	scene.add(spot);
 	spot2 = new TentLights.Mover( "#ffffff" );
-	spot2.position.set( 0, 0, 7 );
+	spot2.position.set( 0, 0, 9 );
+	spot2.tilt = Math.PI/15;
 	scene.add(spot2);
 	spot3 = new TentLights.Mover( "#ffffff" );
-	spot3.position.set( 0, -3, 8 );
+	spot3.position.set( 0, -4, 9 );
 	scene.add(spot3);
 
 
@@ -279,6 +284,8 @@ function main() {
 $(document).ready(main);
 
 $(window).resize(screenSizeChange);
+
+
 
 
 

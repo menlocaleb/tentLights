@@ -12,13 +12,20 @@ body {
 	color: white;
 }
 
+div {
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box;         /* Opera/IE 8+ */
+}
+
 a {
 	color: yellow;
 	font-weight: bold;
+	text-decoration: none;
 }
 
 #tl-container {
-	width: 1600px;
+	width: 1300px;
 	height: 100%;
 	margin: 0px auto;
 	clear: both;
@@ -26,16 +33,38 @@ a {
 
 #tl-header {
 	width: 100%;
-	height: 80px;
-	padding: 10px 100px;
-	clear: both;
-	overflow: hidden;
+	height: 100px;
+	padding: 0px 30px;
 }
 
 #tl-brand {
-	width: 25%;
+	width: 23%;
 	float: left;
-	clear:both;
+	position: relative;
+}
+#tl-brand h1 {
+	margin: 10px 0px;
+	padding: 0px;
+}
+
+#tl-brand h2 {
+	color: yellow;
+	position: absolute;
+	top: -15px;
+	right: 0px;
+
+	-webkit-transform: rotate(10deg); /* Chrome, Opera 15+, Safari 3.1+ */
+    -ms-transform: rotate(7.5deg);  /* IE 9 */
+    transform: rotate(7.5deg);  /* Firefox 16+, IE 10+, Opera */
+}
+
+#tl-tagline {
+	height: 100%;
+	position: relative;
+}
+
+#tl-tagline span {
+	font-size: 1.25em;
 }
 
 #tl-brand h1 {
@@ -43,19 +72,19 @@ a {
 }
 
 #tl-viewport {
-	width: 67%;
+	width: 69%;
 	max-height: 600px;
 	margin-left: 2%;
 	float: left;
 
-	border-width: 5px;
+	border-width: 2px;
 	border-style: solid;
-	border-color: black;
+	border-color: yellow;
 }
 
 #tl-control-panel {
-	width: 25%%;
-	height: 600px;
+	width: 26%%;
+	height: 510px;
 	margin-right: 2%;
 	padding: 1%;
 	background-color: #222222;
@@ -69,8 +98,8 @@ a {
 }
 
 .tl-toggle-light {
-	width: 32%;
-	height: 50px;
+	width: 30%;
+	height: 35px;
 	background-color: #444444;
 	text-align: center;
 	padding-top: 10px;
@@ -78,17 +107,25 @@ a {
 	float: left;
 }
 
+.tl-toggle-light:hover {
+	height: 33px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: white;
+}
+
 #tl-light-selector .selected {
 	background-color: green;
 }
 
 #tl-live-controls {
+	margin: auto;
 	clear: both;
 }
 
 #tl-color-picker {
+	width: 97%;
 	margin-left: 4px;
-	width: 80%;
 }
 
 .tl-color-swath {
@@ -105,6 +142,18 @@ a {
 	border-color: yellow;	
 }
 
+#tl-feedback-stub {
+	float: right;
+}
+
+#tl-feedback-stub a {
+	color: white;
+	text-decoration: none;
+}
+
+#tl-feedback-stub a:hover {
+	color: yellow;
+}
 
 
 
