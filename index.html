@@ -6,61 +6,7 @@
 	</head>
 	<body>
 		<script src="js/three.min.js"></script>
-		<script src="js/lightingController.js"></script>
+		<script src="js/tentLightsLights.js"></script>
 		<script src="js/main.js"></script>
-		<script>
-			var scene = new THREE.Scene();
-			var camera = new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight, 0.1, 1000);
-
-			var renderer = new THREE.WebGLRenderer();
-			renderer.setSize(window.innerWidth, window.innerHeight);
-			document.body.appendChild(renderer.domElement);
-
-			var geometry = new THREE.BoxGeometry(1,1,1);
-			var material = new THREE.MeshLambertMaterial({color: 0xffff00});
-			var cube = new THREE.Mesh(geometry, material);
-			cube.position.z = 2;
-			scene.add(cube);
-
-
-			createRoom(scene);
-
-			addLight(scene);
-
-			renderer.shadowMapEnabled = true;
-
-			// so we can see a bit besides spotlight
-			var light = new THREE.AmbientLight( 0x040404 ); // soft white light
-			scene.add( light );
-
-
-			camera.position.y = 5;
-			camera.position.z = 5;
-			camera.up = new THREE.Vector3(0,0,1);
-			camera.lookAt(new THREE.Vector3(0,0,0));
-
-			var rotation = 0.1;
-
-
-			var render = function () {
-				requestAnimationFrame(render);
-
-				//cube.rotation.x += rotation;
-				//cube.rotation.y += rotation;
-
-				renderer.render(scene, camera);
-			};
-
-			
-			window.onkeydown = function(data) {
-				if (rotation == 0) {
-					rotation = 0.1;
-				} else {
-					rotation = 0;
-				}
-				
-			};
-			render();
-		</script>
 	</body>
 </html>
