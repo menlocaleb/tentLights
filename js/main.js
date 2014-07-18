@@ -4,19 +4,14 @@
 var scene;
 var camera;
 var renderer;
-var spot;
 var ambientLight;
-var l1
-var panAngle = 0;
-var tiltAngle = 0;
-var stepAngle = Math.PI/50;
-var stepTiltAngle = Math.PI/100;
-var animationType = "twirly";
+var animationType = "circle";
 
 var renderWindow;
 var aspectRatio = 16/9;
 
 var lightingController = {};
+var lights = [];
 var lightingBoard;
 
 
@@ -35,38 +30,34 @@ function init() {
 	scene.add( ambientLight );
 }
 
+function SetLightColors(lightIds, color) {
+	var count = 0;
+	for (var id in lightIds) {
+		if (lights[id]) {
+			lights[id].color.setStyle(color);
+			count = count + 1;
+		}
+	}
+
+	return count;
+}
+
+function ToggleLightAnimations() {
+
+}
+
 function initUI() {
 
 	$(".tl-color-swath").click(function() {
-		var selected = $(this).hasClass('selected');
-		if (!selected) {
-			var color = $(this).css('background-color');
-			var lightIds = lightingBoard.GetSelectedLights();
-			var count = 0;
-			var predominantColor;
-			if (lightIds["1"]) {
-				spot.color.setStyle(color);
-				predominantColor = spot.color;
-				count = count + 1;
-			}
-			if (lightIds["2"]) {
-				spot2.color.setStyle(color);
-				predominantColor = spot2.color;
-				count = count + 1;
-			}
-			if (lightIds["3"]) {
-				spot3.color.setStyle(color);
-				predominantColor = spot3.color;
-				count = count + 1;
-			}
-			if (count >= 2) {
-				var scaleFactor = 0.2;
-				var ambientColor = new THREE.Color(predominantColor.r * scaleFactor, predominantColor.g * scaleFactor, predominantColor.b * scaleFactor);
-				ambientLight.color = ambientColor;
-			}
-			$("#tl-color-picker .selected").removeClass('selected');
-			$(this).addClass('selected');
-
+		var color = $(this).css('background-color');
+		var lightIds = lightingBoard.GetSelectedLights();
+		var count = SetLightColors(lightIds, color);
+		
+		if (count >= lights.length/2.0) {
+			var scaleFactor = 0.2;
+			var predominantColor = new THREE.Color().setStyle(color);
+			var ambientColor = new THREE.Color(predominantColor.r * scaleFactor, predominantColor.g * scaleFactor, predominantColor.b * scaleFactor);
+			ambientLight.color = ambientColor;
 		}
 		
 	});
@@ -78,6 +69,14 @@ function initUI() {
 		} else {
 			animationType = 'circle';
 			$(this).css("background-color", "#00CC30");
+		}
+
+		for (var id in lights) {
+			if (lights[id].GetAnimationType() === "circle") {
+				lights[id].SetAnimation({animationType:"twirly"});
+			} else {
+				lights[id].SetAnimation({animationType:"circle"});
+			}
 		}
 		
 	});
@@ -96,47 +95,18 @@ function setupCamera() {
 	camera.lookAt(new THREE.Vector3(0,-4,3));
 }
 
+function AnimateLights() {
+	for (var id in lights) {
+		lights[id].Animate();
+	}
+}
+
 var render = function() {
 	requestAnimationFrame(render);
-
-	if (animationType === 'circle') {
-		animateLightCircle(spot);
-		animateLightCircleAndTilt(spot2);
-		animateLightCircle(spot3, true);
-
-	} else {
-		animateLightCircleAndTilt(spot);
-		animateLightCircle(spot2);
-		animateLightCircleAndTilt(spot3, true);
-	}
+	AnimateLights();
 	renderer.render(scene, camera);
 };
 
-
-function animateLightCircle(light, switchDir) {
-	if (switchDir) {
-		light.pan = light.pan - stepAngle;
-	} else {
-		light.pan = light.pan + stepAngle;
-	}
-}
-
-
-
-function animateLightCircleAndTilt(light, switchDir) {
-	if (switchDir) {
-		light.pan = light.pan - stepAngle;
-	} else {
-		light.pan = light.pan + stepAngle;
-	}
-
-	if (Math.abs(light.tilt + stepTiltAngle) > Math.PI/3) {
-		stepTiltAngle = -1 * stepTiltAngle;
-	}
-
-	light.tilt = light.tilt + stepTiltAngle;	
-	
-}
 
 
 // Until have model of DM tent, use this to test lights inside of
@@ -237,13 +207,8 @@ function createColorPicker() {
 		'#26FFF4',
 		'#00CC30'
 	];
-
-	// make first color selected
-	if (listOfColors.length > 0) {
-		$("#tl-color-picker").append('<div class="tl-color-swath selected" style="width:' + 97/listOfColors.length + '%; background-color:' + listOfColors[0] + ';"></div>');
-	}																						// use 99 to ensure border doesn't make swatches overlap line
-	for (var i = 1; i < listOfColors.length; i++) {
-		console.log("list of colors");
+	
+	for (var i = 0; i < listOfColors.length; i++) {
 		$("#tl-color-picker").append('<div class="tl-color-swath" style="width:' + 97/listOfColors.length + '%; background-color:' + listOfColors[i] + ';"></div>');
 	}
 	
@@ -256,22 +221,25 @@ function main() {
 	createRoom(scene);
 	setupCamera();
 
-	spot = new TentLights.Mover( "#ffffff" );
-	spot.position.set( 0, 4, 9 );
-	scene.add(spot);
-	spot2 = new TentLights.Mover( "#ffffff" );
-	spot2.position.set( 0, 0, 9 );
-	spot2.tilt = Math.PI/15;
-	scene.add(spot2);
-	spot3 = new TentLights.Mover( "#ffffff" );
-	spot3.position.set( 0, -4, 9 );
-	scene.add(spot3);
+	lights["1"] = new TentLights.Mover( "#ffffff" );
+	lights["1"].position.set( 0, 4, 9 );
+	lights["1"].SetAnimation({animationType: "twirly"});
+	scene.add(lights["1"]);
+	lights["2"] = new TentLights.Mover( "#ffffff" );
+	lights["2"].position.set( 0, 0, 9 );
+	lights["2"].tilt = Math.PI/4;
+	lights["2"].SetAnimation({clockwise: false});
+	scene.add(lights["2"]);
+	lights["3"] = new TentLights.Mover( "#ffffff" );
+	lights["3"].position.set( 0, -4, 9 );
+	lights["3"].SetAnimation({animationType: "twirly"});
+	scene.add(lights["3"]);
 
 
 	createColorPicker();
 	initUI();
 	lightingBoard = new TentLights.LightingBoard(lightingController);
-	lightingBoard.CreateSelectionHandlers(".lt-toggle-light");
+	lightingBoard.CreateSelectionHandlers(".tl-toggle-light");
 	
 
 

@@ -14,6 +14,9 @@ TentLights.Mover = function(hex, intensity) {
 	// subclass THREE.SportLight
 	THREE.SpotLight.call(this, hex, intensity);
 
+	// store this so that private methods can use it 
+	var me = this;
+
 	// Private properties
 	var lightGeometry = new THREE.CylinderGeometry( 0.5, 0.5, 1, 20);
 	var lightMaterial = new THREE.MeshBasicMaterial( {color: 0x000000} );
@@ -22,7 +25,13 @@ TentLights.Mover = function(hex, intensity) {
 	lightBody.rotation.x = Math.PI/2;
 	this.add( lightBody );
 
-	
+	var animation = {
+		animationType: "circle",
+		clockwise: true 
+	};
+
+	var stepAngle = Math.PI/50;
+	var stepTiltAngle = Math.PI/100;
 
 	// Lock spot light target to -z axis of spotlight
 	// Now spot light can be turned using rotation of spotlight
@@ -80,6 +89,70 @@ TentLights.Mover = function(hex, intensity) {
 	// Object.defineProperty(this.rotation, order, {
 	// 	writeable: false
 	// });
+
+	this.SetAnimation = function(animationObj) {
+		if (typeof(animationObj) !== "object") {
+			throw new TypeError("TentLights.Mover.SetAnimation expects an object");
+		}
+		if (animationObj.animationType !== undefined) {
+			if (animationObj.animationType === "circle" || animationObj.animationType === "twirly") {
+				animation.animationType = animationObj.animationType;
+			} else {
+				throw new RangeError("Unrecognized animation type");
+			}
+		}
+		if (animationObj.clockwise !== undefined) {
+			if (typeof(animationObj.clockwise) === "boolean") {
+				animation.clockwise = animationObj.clockwise;
+			} else {
+				throw new TypeError("Animation.clockwise expects a boolean");
+			}
+		}
+		
+	}
+
+	this.GetAnimationType = function() {
+		return animation.animationType;
+	}
+
+	this.GetAnimationIsClockwise = function() {
+		return animation.clockwise;
+	}
+
+
+	var animateLightCircle = function() {
+		if (animation.clockwise) {
+			me.pan = me.pan - stepAngle;
+		} else {
+			me.pan = me.pan + stepAngle;
+		}
+	}
+
+
+
+	var animateLightCircleAndTilt = function() {
+		if (animation.clockwise) {
+			me.pan = me.pan - stepAngle;
+		} else {
+			me.pan = me.pan + stepAngle;
+		}
+
+		if (Math.abs(me.tilt + stepTiltAngle) > Math.PI/3) {
+			stepTiltAngle = -1 * stepTiltAngle;
+		}
+
+		me.tilt = me.tilt + stepTiltAngle;	
+		
+	}
+
+
+	this.Animate = function() {
+		if (animation.animationType === "circle") {
+			animateLightCircle();
+		} else {
+			animateLightCircleAndTilt();
+		}
+	}
 
 
 

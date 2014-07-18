@@ -52,7 +52,7 @@ test("AddLightToSelection Invalid Use Test", function() {
 			lightingBoard.AddLightToSelection("1.4");
 		},
 		TypeError,
-		"AddLightToSelection expects a string that can parse to and integer"
+		"AddLightToSelection expects a string that can parse to an integer"
 	);
 
 	throws(

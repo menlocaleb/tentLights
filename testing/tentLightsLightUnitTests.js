@@ -201,7 +201,102 @@ test("Verify Tilt accessor invalid use", function() {
 	);
 });
 
+test("Set Animation Valid Usage", function() {
+	var mover = new TentLights.Mover();
 
+	strictEqual(mover.GetAnimationType(), "circle", "Default animation type should be circle");
+
+	mover.SetAnimation({animationType: "twirly", clockwise: false});
+	strictEqual(mover.GetAnimationType(), "twirly", "Animation type should be twirly");
+	strictEqual(mover.GetAnimationIsClockwise(), false, "Animation direction should not be clockwise");
+
+});
+
+test("Set Animation Invalid Input", function() {
+	var mover = new TentLights.Mover();
+
+	throws(
+		function() {
+			mover.SetAnimation(null);
+		},
+		TypeError,
+		"Set Animation Type expects a object as input"
+	);
+
+	throws(
+		function() {
+			mover.SetAnimation(0);
+		},
+		TypeError,
+		"Set Animation Type expects a object as input"
+	);
+
+	throws(
+		function() {
+			mover.SetAnimation("");
+		},
+		TypeError,
+		"Set Animation Type expects a object as input"
+	);
+
+	throws(
+		function() {
+			mover.SetAnimation({animationType : "foobar"});
+		},
+		RangeError,
+		"Set Animation Type encountered unknown input"
+	);
+
+	throws(
+		function() {
+			mover.SetAnimation({animationType : 23});
+		},
+		RangeError,
+		"Set Animation Type expects a string"
+	);
+
+	throws(
+		function() {
+			mover.SetAnimation({clockwise : 23});
+		},
+		TypeError,
+		"Set Animation clockwise expects a boolean"
+	);
+
+
+
+
+});
+
+test("Animate method calls correct underlying logic", function() {
+	var mover = new TentLights.Mover();
+
+	strictEqual(mover.GetAnimationType(), "circle", "Verify circle is default animation");
+
+	var oldTilt = mover.tilt;
+	var oldPan = mover.pan;
+
+	mover.Animate();
+
+	notStrictEqual(mover.pan, oldPan, "Pan should change for circle animation");
+	strictEqual(mover.tilt, oldTilt, "Tilt shouldn't change for circle animation");
+
+
+
+	mover.SetAnimation({animationType: "twirly"});
+
+	strictEqual(mover.GetAnimationType(), "twirly", "Verify twirly is now the animation type");
+
+	oldTilt = mover.tilt;
+	oldPan = mover.pan;
+
+	mover.Animate();
+
+	notStrictEqual(mover.pan, oldPan, "Pan should change for twirly animation");
+	notStrictEqual(mover.tilt, oldTilt, "Tilt should also change for twirly animation");
+
+
+});
 
 
 })();

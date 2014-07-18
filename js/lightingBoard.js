@@ -48,7 +48,7 @@ TentLights.LightingBoard = function(lightingController) {
 TentLights.LightingBoard.prototype.CreateSelectionHandlers = function(className) {
 	// store this variable before reset for jQuery block below
 	var self = this;
-	$(".tl-toggle-light").click(function() {
+	$(className).click(function() {
 		var button = $(this);
 		var lightId = button.attr("data-id");
 
